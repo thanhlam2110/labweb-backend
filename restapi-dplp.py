@@ -1,13 +1,15 @@
 from flask import Flask, request
 import json
 import requests
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 #-----------------FUNTION-----------------
 def get_dblp_results(author_name):
     base_url = "https://dblp.org/search/publ/api"
     params = {
         "q": author_name,
         "format": "json",
-        "h": 100000
+        "h": 7000
     }
     response = requests.get(base_url, params=params)
     if response.status_code == 200:
@@ -28,8 +30,10 @@ def check_string_in_dict(dict_item, string_to_check):
 
 def correct_author(author_name:str):
     dblp_results = get_dblp_results(author_name)
+    print(dblp_results)
     correct_author_publication = {}
     overall_infos =dblp_results["result"]["hits"]["hit"]
+    print(overall_infos)
     index = 0
     for i in range(len(overall_infos)):
         #print("------------------"+str(i)+"------------------")
@@ -98,6 +102,7 @@ def list_type_publication(author_name:str):
     return type_publication_dict
 #---------------ROUTE--------------------
 app = Flask(__name__)
+CORS(app)  # Add this line to enable CORS for all routes
 @app.route('/')
 def hello():
     return 'THIS IS RESTAPI FOR GETTING PUBLICATION FROM DBLP'
