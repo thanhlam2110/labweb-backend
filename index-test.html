@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Data Fetch</title>
+	<style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Publication Filters for Prof. Elena Ferrari</h1>
+
+    <label for="yearSelect">Year of Publication:</label>
+    <select id="yearSelect">
+        <option value="">Select a year</option>
+    </select>
+
+    <label for="categorySelect">Category of Publication:</label>
+    <select id="categorySelect">
+        <option value="">Select a category</option>
+    </select>
+
+    <script>
+        // Function to populate the select tag with options from API data
+        function populateSelect(selectElement, data) {
+            const select = document.getElementById(selectElement);
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.text = item;
+                select.appendChild(option);
+            });
+        }
+
+        const authorName = "Elena Ferrari";
+
+        // Fetch data from the year API endpoint and populate the year select tag
+        fetch(`http://192.168.107.133:5000/api/getYearPublication?author_name=${encodeURIComponent(authorName)}`)
+            .then(response => response.json())
+            .then(data => populateSelect('yearSelect', data.year))
+            .catch(error => console.error('Error fetching year data:', error));
+
+        // Fetch data from the category API endpoint and populate the category select tag
+        fetch(`http://192.168.107.133:5000/api/getCategoryPublication?author_name=${encodeURIComponent(authorName)}`)
+            .then(response => response.json())
+            .then(data => populateSelect('categorySelect', data.type))
+            .catch(error => console.error('Error fetching category data:', error));
+    </script>
+	<button id="fetchButton">Search Publications by Year</button>
+	<button id="fetchButton2">Search Publications by Category</button>
+    <table id="publicationTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>DOI</th>
+                <th>Type</th>
+                <th>Venue</th>
+                <th>Volume</th>
+                <th>URL</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        document.getElementById("fetchButton").addEventListener("click", fetchPublications);
+
+        function fetchPublications() {
+            const yearSelect = document.getElementById("yearSelect");
+            const selectedYear = yearSelect.value;
+
+            if (!selectedYear) {
+                alert("Please select a year.");
+                return;
+            }
+
+            fetch(`http://192.168.107.133:5000/api/getPublicationByYear?author_name=${encodeURIComponent(authorName)}&year=${encodeURIComponent(selectedYear)}`)
+                .then(response => response.json())
+                .then(data => displayPublications(data))
+                .catch(error => console.error('Error fetching publication data:', error));
+        }
+
+        function displayPublications(publications) {
+            const tableBody = document.querySelector("#publicationTable tbody");
+            tableBody.innerHTML = "";
+
+            for (const key in publications) {
+                const publication = publications[key];
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${publication.title}</td>
+                    <td>${publication.doi}</td>
+                    <td>${publication.type}</td>
+                    <td>${publication.venue}</td>
+                    <td>${publication.volume}</td>
+                    <td><a href="${publication.url}" target="_blank">Link</a></td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+    </script>
+	<script>
+        document.getElementById("fetchButton2").addEventListener("click", fetchPublications);
+
+        function fetchPublications() {
+            const yearSelect = document.getElementById("yearSelect");
+            const selectedYear = yearSelect.value;
+
+            const categorySelect = document.getElementById("categorySelect");
+            const selectedCategory = categorySelect.value;
+
+            if (!selectedYear && !selectedCategory) {
+                alert("Please select a year or a category.");
+                return;
+            }
+
+            let url = `http://192.168.107.133:5000/api/getPublicationByYear?author_name=${encodeURIComponent(authorName)}&year=${encodeURIComponent(selectedYear)}`;
+            if (selectedCategory) {
+                url = `http://192.168.107.133:5000/api/getPublicationByCategory?author_name=${encodeURIComponent(authorName)}&category_name=${encodeURIComponent(selectedCategory)}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => displayPublications(data))
+                .catch(error => console.error('Error fetching publication data:', error));
+        }
+
+        function displayPublications(publications) {
+            const tableBody = document.querySelector("#publicationTable tbody");
+            tableBody.innerHTML = "";
+
+            for (const key in publications) {
+                const publication = publications[key];
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${publication.title}</td>
+                    <td>${publication.doi}</td>
+                    <td>${publication.type}</td>
+                    <td>${publication.venue}</td>
+                    <td>${publication.volume}</td>
+                    <td><a href="${publication.url}" target="_blank">Link</a></td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
