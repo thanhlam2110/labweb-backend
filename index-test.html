@@ -55,6 +55,7 @@
     </script>
 	<button id="fetchButton">Search Publications by Year</button>
 	<button id="fetchButton2">Search Publications by Category</button>
+	<button id="fetchButton3">Search Publications by Category & Year</button>
     <table id="publicationTable">
         <thead>
             <tr>
@@ -125,6 +126,48 @@
             if (selectedCategory) {
                 url = `http://192.168.107.133:5000/api/getPublicationByCategory?author_name=${encodeURIComponent(authorName)}&category_name=${encodeURIComponent(selectedCategory)}`;
             }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => displayPublications(data))
+                .catch(error => console.error('Error fetching publication data:', error));
+        }
+
+        function displayPublications(publications) {
+            const tableBody = document.querySelector("#publicationTable tbody");
+            tableBody.innerHTML = "";
+
+            for (const key in publications) {
+                const publication = publications[key];
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${publication.title}</td>
+                    <td>${publication.doi}</td>
+                    <td>${publication.type}</td>
+                    <td>${publication.venue}</td>
+                    <td>${publication.volume}</td>
+                    <td><a href="${publication.url}" target="_blank">Link</a></td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+    </script>
+	<script>
+        document.getElementById("fetchButton3").addEventListener("click", fetchPublications);
+
+        function fetchPublications() {
+            const yearSelect = document.getElementById("yearSelect");
+            const selectedYear = yearSelect.value;
+
+            const categorySelect = document.getElementById("categorySelect");
+            const selectedCategory = categorySelect.value;
+
+            if (!selectedYear && !selectedCategory) {
+                alert("Please select a year and a category.");
+                return;
+            }
+
+            let url = `http://192.168.107.133:5000/api/getPublicationByCategoryAndYear?author_name=${encodeURIComponent(authorName)}&category_name=${encodeURIComponent(selectedCategory)}&year=${encodeURIComponent(selectedYear)}`;
 
             fetch(url)
                 .then(response => response.json())
