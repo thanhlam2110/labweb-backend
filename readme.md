@@ -1,6 +1,8 @@
 
 # labweb-backend
 
+## Introduction
+This is an API collection that gets publication data from https://dblp.org/.
 
 
 <!--- If we have only one group/collection, then no need for the "ungrouped" heading -->
