@@ -4,12 +4,19 @@ import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 #-----------------FUNTION-----------------
+def edit_dict_keys(dictionary):
+    new_dict = {}
+    new_key = 0
+    for old_key in dictionary:
+        new_dict[new_key] = dictionary[old_key]
+        new_key += 1
+    return new_dict
 def get_dblp_results(author_name):
     base_url = "https://dblp.org/search/publ/api"
     params = {
         "q": author_name,
         "format": "json",
-        "h": 7000
+        "h": 5000
     }
     response = requests.get(base_url, params=params)
     if response.status_code == 200:
@@ -66,7 +73,7 @@ def category_publication(author_name:str,category_name:str):
         types = correct_author_publication[i]["type"]
         if(types==category_name):
             category_publication[i] = correct_author_publication[i]
-    return category_publication
+    return edit_dict_keys(category_publication)
 def year_publication(author_name:str,year:str):
     correct_author_publication = correct_author(author_name)
     year_publication = {}
@@ -74,7 +81,7 @@ def year_publication(author_name:str,year:str):
         yearInfo = correct_author_publication[i]["year"]
         if(yearInfo==year):
             year_publication[i] = correct_author_publication[i]
-    return year_publication
+    return edit_dict_keys(year_publication)
 def range_year_publication(author_name:str):
     correct_author_publication = correct_author(author_name)
     total_year_arr = []
@@ -100,6 +107,20 @@ def list_type_publication(author_name:str):
         type_publication.append(value)
     type_publication_dict["type"] = type_publication
     return type_publication_dict
+def category_year_publication(author_name:str,category_name:str,year:str):
+    correct_author_publication = correct_author(author_name)
+    category_publication = {}
+    category_year_publication = {}
+    for i in range(len(correct_author_publication)):
+        types = correct_author_publication[i]["type"]
+        if(types==category_name):
+            category_publication[i] = correct_author_publication[i]
+    category_publication = edit_dict_keys(category_publication)
+    for j in range(len(category_publication)):
+        yearInfo = category_publication[j]["year"]
+        if(yearInfo==year):
+            category_year_publication[j] = category_publication[j]
+    return edit_dict_keys(category_year_publication)
 #---------------ROUTE--------------------
 app = Flask(__name__)
 CORS(app)  # Add this line to enable CORS for all routes
@@ -133,6 +154,13 @@ def getPublicationByYear():
     year = str(request.args.get('year'))
     yearPublication= year_publication(author_name,year)
     return yearPublication
+@app.route('/api/getPublicationByCategoryAndYear', methods=['GET'])
+def getPublicationByCategoryAndYear():
+    author_name = request.args.get('author_name')
+    year = str(request.args.get('year'))
+    category_name = request.args.get('category_name')
+    categoryYearPublication = category_year_publication(author_name,category_name,year)
+    return categoryYearPublication
 #---------------MAIN--------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
