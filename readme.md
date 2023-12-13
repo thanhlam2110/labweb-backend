@@ -18,6 +18,7 @@ This is an API collection that gets publication data from https://dblp.org/.
 
 ```bash
 apt install python3-pip
+apt-get install net-tools
 pip3 install flask
 pip3 install flask_cors
 ```
