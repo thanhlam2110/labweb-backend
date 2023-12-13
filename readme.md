@@ -23,6 +23,27 @@ pip3 install flask
 pip3 install flask_cors
 ```
 
+## Create Service
+
+```bash
+nano /etc/systemd/system/lab-backend.service
+
+Add to file
+[Unit]
+Description=Lab Backend
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root/labweb-backend
+ExecStart=/usr/bin/python3 /root/labweb-backend/restapi-dplp.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+```
 
 ## Endpoints
 
