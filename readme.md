@@ -25,10 +25,14 @@ pip3 install flask_cors
 
 ## Create Service
 
+Create service file
+
 ```bash
 nano /etc/systemd/system/lab-backend.service
-
+```
 Add to file
+
+```bash
 [Unit]
 Description=Lab Backend
 After=network.target
@@ -43,6 +47,13 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 
+```
+
+```bash
+systemctl daemon-reload
+systemctl start lab-backend.service
+systemctl status lab-backend.service
+systemctl enable lab-backend.service
 ```
 
 ## Endpoints
