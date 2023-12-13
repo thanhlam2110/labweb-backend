@@ -13,7 +13,14 @@ This is an API collection that gets publication data from https://dblp.org/.
 1. [getCategoryPublication](#5-getcategorypublication)
 1. [getAllPublication](#6-getallpublication)
 
+## Install
 
+<pre>
+```bash
+apt install python3-pip
+pip3 install flask
+```
+</pre>
 
 ## Endpoints
 
