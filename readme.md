@@ -49,6 +49,8 @@ WantedBy=multi-user.target
 
 ```
 
+Start Service
+
 ```bash
 systemctl daemon-reload
 systemctl start lab-backend.service
