@@ -15,12 +15,13 @@ This is an API collection that gets publication data from https://dblp.org/.
 
 ## Install
 
-<pre>
+
 ```bash
 apt install python3-pip
 pip3 install flask
+pip3 install flask_cors
 ```
-</pre>
+
 
 ## Endpoints
 
